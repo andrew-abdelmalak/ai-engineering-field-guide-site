@@ -131,3 +131,31 @@ export async function getSiteNav(): Promise<SiteNav> {
 }
 
 export const NAV_REVALIDATE = CONTENT_REVALIDATE_SECONDS;
+
+/**
+ * Every repo-relative markdown path actually linked from the README's nav
+ * (including nested children like the Interview Questions sub-list) — the
+ * exact set of pages worth statically pre-rendering, as opposed to every
+ * .md file that happens to exist in the repo (READMEs, internal notes, etc).
+ */
+export function collectDocPaths(nav: SiteNav, resolveDocPath: (href: string) => string | null): string[] {
+  const paths = new Set<string>();
+
+  function visit(links: NavLink[]) {
+    for (const link of links) {
+      const path = resolveDocPath(link.href);
+      if (path) paths.add(path);
+      if (link.children.length) visit(link.children);
+    }
+  }
+
+  for (const section of nav.sections) {
+    if (section.href) {
+      const path = resolveDocPath(section.href);
+      if (path) paths.add(path);
+    }
+    visit(section.items);
+  }
+
+  return [...paths];
+}

@@ -1,15 +1,33 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ContentNotFoundError, getFileContent } from "@/lib/github";
-import { getSiteNav } from "@/lib/nav";
-import { docSlugToPath, humanizeSegment, InvalidPathError } from "@/lib/routes";
+import { getSiteNav, collectDocPaths } from "@/lib/nav";
+import { docSlugToPath, humanizeSegment, InvalidPathError, resolveRepoLink } from "@/lib/routes";
 import { splitTitle } from "@/lib/markdown-split";
 import { extractToc } from "@/lib/toc";
 import { DocLayout } from "@/components/doc-layout";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { UpdatedBadge } from "@/components/updated-badge";
 
+// Must be a literal (Next statically parses this) — flipped to `false` by
+// scripts/build-static.mjs for static-export builds, where every param has
+// to come from generateStaticParams below (no server to fall back to).
 export const dynamicParams = true;
+
+/**
+ * Statically pre-renders every markdown page actually linked from the
+ * README's nav (root section links plus nested children, e.g. the Interview
+ * Questions sub-list) — the same set a reader can reach by clicking through
+ * the site, not every .md file that happens to exist in the repo.
+ */
+export async function generateStaticParams() {
+  const nav = await getSiteNav();
+  const paths = collectDocPaths(nav, (href) => {
+    const target = resolveRepoLink("", href);
+    return target.kind === "doc" ? target.path : null;
+  });
+  return paths.map((path) => ({ slug: path.replace(/\.md$/i, "").split("/") }));
+}
 
 async function loadDoc(slug: string[]) {
   const path = docSlugToPath(slug);
@@ -51,7 +69,7 @@ export default async function DocPage({ params }: { params: Promise<{ slug: stri
   const baseDir = slug.slice(0, -1).join("/");
   const crumbs: { text: string; href?: string }[] = slug.slice(0, -1).map((segment, i) => ({
     text: humanizeSegment(segment),
-    href: `/browse/${slug.slice(0, i + 1).join("/")}`,
+    href: `/browse#${slug.slice(0, i + 1).join("/")}`,
   }));
   crumbs.push({ text: doc.title });
 

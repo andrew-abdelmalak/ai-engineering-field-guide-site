@@ -39,6 +39,10 @@ export type ResolvedTarget =
  * Classifies a repo-relative link so it can be routed inside the site
  * (doc page, directory browser, structured data view) instead of pointing
  * straight at GitHub.
+ *
+ * /browse and /data are single client-rendered pages (no server, so they work
+ * unmodified on static hosts like GitHub Pages) that read the target repo path
+ * from the URL hash — hence the `#path` hrefs here instead of `/browse/path`.
  */
 export function resolveRepoLink(baseDir: string, href: string): ResolvedTarget {
   if (isExternalLink(href) || href.startsWith("#")) return { kind: "external", href };
@@ -48,14 +52,14 @@ export function resolveRepoLink(baseDir: string, href: string): ResolvedTarget {
   const hash = hashPart ? `#${hashPart}` : "";
 
   if (pathPart.endsWith("/") || pathPart === "") {
-    return { kind: "dir", path, href: `/browse/${path}${hash}` };
+    return { kind: "dir", path, href: `/browse#${path}${hash}` };
   }
   const lower = path.toLowerCase();
   if (lower.endsWith(".md")) {
     return { kind: "doc", path, href: `/docs/${path.replace(/\.md$/i, "")}${hash}` };
   }
   if (DATA_EXTENSIONS.some((ext) => lower.endsWith(ext))) {
-    return { kind: "data", path, href: `/data/${path}${hash}` };
+    return { kind: "data", path, href: `/data#${path}${hash}` };
   }
   if (IMAGE_EXTENSIONS.some((ext) => lower.endsWith(ext)) || DOCUMENT_EXTENSIONS.some((ext) => lower.endsWith(ext))) {
     return { kind: "asset", path, href: rawFileUrl(path) };
@@ -110,13 +114,26 @@ export function toPlainText(markdown: string): string {
     .trim();
 }
 
-export function buildCrumbs(slug: string[], hrefPrefix: "docs" | "browse" | "data") {
+export function buildCrumbs(slug: string[], hrefPrefix: "docs") {
   return slug.map((segment, i) => {
     const partial = slug.slice(0, i + 1).join("/");
     const isLast = i === slug.length - 1;
     return {
       text: humanizeSegment(segment),
       href: isLast ? undefined : `/${hrefPrefix}/${partial}`,
+    };
+  });
+}
+
+/** Same as buildCrumbs, but for the hash-routed /browse and /data pages. */
+export function buildHashCrumbs(path: string, page: "browse" | "data") {
+  const slug = path.split("/").filter(Boolean);
+  return slug.map((segment, i) => {
+    const partial = slug.slice(0, i + 1).join("/");
+    const isLast = i === slug.length - 1;
+    return {
+      text: humanizeSegment(segment),
+      href: isLast ? undefined : `/${page}#${partial}`,
     };
   });
 }

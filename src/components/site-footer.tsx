@@ -19,8 +19,8 @@ export function SiteFooter() {
           <div className="flex gap-10 text-sm">
             <div className="flex flex-col gap-2">
               <span className="font-medium text-ink-faint">Explore</span>
-              <Link href="/browse/job-market/data_structured" className="text-ink-soft hover:text-accent">Job market data</Link>
-              <Link href="/browse/interview/data" className="text-ink-soft hover:text-accent">Interview company data</Link>
+              <Link href="/browse#job-market/data_structured" className="text-ink-soft hover:text-accent">Job market data</Link>
+              <Link href="/browse#interview/data" className="text-ink-soft hover:text-accent">Interview company data</Link>
               <Link href="/docs/awesome" className="text-ink-soft hover:text-accent">Awesome list</Link>
             </div>
             <div className="flex flex-col gap-2">

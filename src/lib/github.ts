@@ -74,20 +74,6 @@ export async function getDirectory(path: string): Promise<GithubEntry[]> {
   return data.sort((a, b) => a.name.localeCompare(b.name));
 }
 
-/** Fetches the whole repo tree in one call — used to build static nav data. */
-export async function getFullTree(): Promise<{ path: string; type: "blob" | "tree" }[]> {
-  const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/git/trees/${GITHUB_BRANCH}?recursive=1`;
-  const res = await fetch(url, {
-    headers: authHeaders(),
-    next: { revalidate: DIRECTORY_REVALIDATE_SECONDS, tags: ["repo-tree"] },
-  });
-  if (!res.ok) throw new Error(`GitHub tree API failed (${res.status})`);
-  const data = (await res.json()) as { tree: { path: string; type: string }[] };
-  return data.tree
-    .filter((t) => t.type === "blob" || t.type === "tree")
-    .map((t) => ({ path: t.path, type: t.type as "blob" | "tree" }));
-}
-
 /** Repo-level metadata for the homepage hero (stars, last push, description). */
 export async function getRepoMeta() {
   const url = `https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}`;
