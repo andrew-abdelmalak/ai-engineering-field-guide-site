@@ -1,0 +1,239 @@
+@import "tailwindcss";
+
+:root {
+  --paper: #faf7f0;
+  --paper-raised: #ffffff;
+  --ink: #1c1917;
+  --ink-soft: #57534e;
+  --ink-faint: #a8a29e;
+  --border: #e7e0d3;
+  --accent: #b3400f;
+  --accent-soft: #f2e3d4;
+  --accent-ink: #7c2d0a;
+  --code-bg: #f1ece0;
+}
+
+.dark {
+  --paper: #14100c;
+  --paper-raised: #1c1712;
+  --ink: #f2ede4;
+  --ink-soft: #c4bbae;
+  --ink-faint: #7d7468;
+  --border: #322a20;
+  --accent: #e2812a;
+  --accent-soft: #2c2015;
+  --accent-ink: #f5b374;
+  --code-bg: #1f1a13;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-ink: var(--accent-ink);
+  --color-code-bg: var(--code-bg);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--paper);
+}
+
+.field-texture {
+  background-image:
+    radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+/* Markdown article typography */
+.prose-field {
+  max-width: 68ch;
+  color: var(--ink);
+  line-height: 1.75;
+}
+
+.prose-field > *:first-child {
+  margin-top: 0;
+}
+
+.prose-field h1 {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 1rem;
+}
+
+.prose-field h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 2.75rem 0 1rem;
+  padding-top: 0.25rem;
+  border-top: 1px solid var(--border);
+  scroll-margin-top: 6rem;
+}
+
+.prose-field h2 a,
+.prose-field h3 a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.prose-field h3 {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin: 2rem 0 0.75rem;
+  scroll-margin-top: 6rem;
+}
+
+.prose-field p {
+  margin: 1rem 0;
+  color: var(--ink);
+}
+
+.prose-field a {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in oklab, var(--accent) 45%, transparent);
+  text-underline-offset: 2px;
+}
+
+.prose-field a:hover {
+  text-decoration-color: var(--accent);
+}
+
+.prose-field ul,
+.prose-field ol {
+  margin: 1rem 0;
+  padding-left: 1.35rem;
+}
+
+.prose-field ul {
+  list-style: disc;
+}
+
+.prose-field ol {
+  list-style: decimal;
+}
+
+.prose-field li {
+  margin: 0.4rem 0;
+}
+
+.prose-field li::marker {
+  color: var(--accent);
+}
+
+.prose-field li > ul,
+.prose-field li > ol {
+  margin: 0.4rem 0;
+}
+
+.prose-field blockquote {
+  margin: 1.5rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  border-left: 3px solid var(--accent);
+  color: var(--ink-soft);
+  font-style: italic;
+}
+
+.prose-field code {
+  font-family: var(--font-mono);
+  background: var(--code-bg);
+  padding: 0.15em 0.4em;
+  border-radius: 0.35em;
+  font-size: 0.85em;
+}
+
+.prose-field pre {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-radius: 0.75rem;
+  overflow-x: auto;
+  font-size: 0.85rem;
+  background: var(--code-bg) !important;
+  border: 1px solid var(--border);
+}
+
+.prose-field pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+
+.prose-field .hljs-keyword,
+.prose-field .hljs-built_in,
+.prose-field .hljs-type {
+  color: var(--accent-ink);
+}
+
+.prose-field .hljs-string,
+.prose-field .hljs-attr {
+  color: #2f6f4e;
+}
+
+.dark .prose-field .hljs-string,
+.dark .prose-field .hljs-attr {
+  color: #7bc99a;
+}
+
+.prose-field .hljs-comment {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.prose-field .hljs-number,
+.prose-field .hljs-literal {
+  color: #a05a2c;
+}
+
+.prose-field .hljs-title,
+.prose-field .hljs-name,
+.prose-field .hljs-section {
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.prose-field th,
+.prose-field td {
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose-field thead th {
+  background: var(--accent-soft);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--accent-ink);
+}
+
+.prose-field tr:last-child td {
+  border-bottom: none;
+}
+
+.prose-field hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 2.5rem 0;
+}
+
+.prose-field strong {
+  font-weight: 600;
+}
